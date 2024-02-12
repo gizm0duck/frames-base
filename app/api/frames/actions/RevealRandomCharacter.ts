@@ -33,7 +33,7 @@ export default class CheckAffiliation {
                   },
                 ],
                 image: {
-                  src: `${process.env.NEXT_PUBLIC_URL}/characters/${getRandomCharacter(this.factionId())}.png`,
+                  src: `${process.env.NEXT_PUBLIC_URL}/characters/${getRandomCharacter(this.factionId())}-frame.png`,
                   aspectRatio: '1:1',
                 },
                 post_url: `${process.env.NEXT_PUBLIC_URL}/api/frames?actionName=RevealRandomCharacter&factionId=${this.factionId()}`,

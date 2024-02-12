@@ -1,5 +1,6 @@
 import { getFaction } from "@/utils/factions";
 import { FrameMetadataType, FrameRequest, FrameValidationData, getFrameHtmlResponse, getFrameMetadata } from "@coinbase/onchainkit";
+import { NextRequest } from "next/server";
 
 export default class CheckAffiliation {
   message: FrameValidationData;
