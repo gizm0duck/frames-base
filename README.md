@@ -117,7 +117,7 @@ export default class CheckAffiliation {
         }
     }
 }
-```ts
+```
 
 ### `app/api/frame/route.ts`
 
