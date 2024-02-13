@@ -15,7 +15,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     component = new actions[actionName.toString()](message, req)
     
   } else {
-    component = new ErrorFrame()
+    component = new ErrorFrame(`${process.env.NEXT_PUBLIC_URL}/error.png`)
   }
   let response = getFrameHtmlResponse(await component.generateFrameMetadata())
     return new NextResponse(

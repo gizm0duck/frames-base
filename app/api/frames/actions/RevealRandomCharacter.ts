@@ -1,6 +1,6 @@
 import { getRandomCharacter } from "@/utils/characters";
 
-import { FrameMetadataType, FrameRequest, FrameValidationData, getFrameHtmlResponse, getFrameMetadata } from "@coinbase/onchainkit";
+import { FrameMetadataType, FrameValidationData } from "@coinbase/onchainkit";
 import { NextRequest } from "next/server";
 import Home from "./Home";
 
@@ -26,7 +26,6 @@ export default class RevealRandomCharacter {
                 buttons: [
                   {
                       label: `Switch Faction`,
-                  
                   },
                   {
                     label: `Generate Character`,

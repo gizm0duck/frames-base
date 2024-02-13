@@ -1,5 +1,5 @@
 import { getFaction } from "@/utils/factions";
-import { FrameMetadataType, FrameRequest, FrameValidationData, getFrameHtmlResponse, getFrameMetadata } from "@coinbase/onchainkit";
+import { FrameMetadataType, FrameValidationData } from "@coinbase/onchainkit";
 import { NextRequest } from "next/server";
 
 export default class CheckAffiliation {
@@ -20,7 +20,6 @@ export default class CheckAffiliation {
           buttons: [
             {
               label: `Switch Faction`,
-          
           },
           {
             label: `Generate Character`,

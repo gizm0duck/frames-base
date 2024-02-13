@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <h1>Heros of Hyperion</h1>
+      <img src="join-the-fight-2.png" width="100%" />
     </>
   );
 }
