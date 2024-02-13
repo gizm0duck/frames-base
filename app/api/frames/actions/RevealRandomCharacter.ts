@@ -2,7 +2,7 @@ import { getRandomCharacter } from "@/utils/characters";
 
 import { FrameMetadataType, FrameValidationData } from "@coinbase/onchainkit";
 import { NextRequest } from "next/server";
-import Home from "./Home";
+import Home from "../Home";
 
 export default class RevealRandomCharacter {
     message: FrameValidationData;

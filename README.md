@@ -1,26 +1,34 @@
-# A Frame in 100 lines (or less)
+# A Simple frame... framework
 
-Farcaster Frames in less than 100 lines, and ready to be deployed to Vercel.
+This was massively inspired by [A Frame in 100 lines or less](https://github.com/Zizzamia/a-frame-in-100-lines?tab=readme-ov-file) and was built on top of their original repo.
 
-To test a Frame, use: https://warpcast.com/~/developers/frames.
+This is an opiniated framework that utilizes action classes to represent each frame that is rendered. Every `post_url` that you render for the frame must include a URL param of `actionID=FrameActionName` where `FrameActionName` corresponds to one of the classes you have created in `api/frames/actions`
 
-And let us know what you build by either mentioning @zizzamia on [Warpcast](https://warpcast.com/zizzamia) or [X](https://twitter.com/Zizzamia).
+There are 3 types of frame classes that you use depending on the situation. 
 
-<br />
+## Action Class Types
 
-Have fun! ⛵️
+`ErrorFrame` These are rendered by `route.ts` in the case where the message is invalid
 
-<br />
+`HomeFrame` These do not receive frame message or request object, and are intended to be rendered on a page and shared as the cast
 
-## App Routing files
+`ActionFrame` These are for all other frames in your app. They receive a message and the request and can encapsulate all of the logic required to render that frame.
 
-- app/
-  - [config.ts](https://github.com/Zizzamia/a-frame-in-100-lines?tab=readme-ov-file#appconfigts)
-  - [layout.tsx](https://github.com/Zizzamia/a-frame-in-100-lines?tab=readme-ov-file#applayouttsx)
-  - [page.tsx](https://github.com/Zizzamia/a-frame-in-100-lines?tab=readme-ov-file#apppagetsx)
-- api/
-  - frame/
-    - [route.ts](https://github.com/Zizzamia/a-frame-in-100-lines?tab=readme-ov-file#appapiframeroutets)
+
+
+## App Structure
+
+- app
+  - page.tsx 
+  - api/
+    - frames/
+      - route.ts
+      - Home.ts - Base page for your frame
+      - ErrorFrame.ts - Will be rendered in the case where the message is invalid
+      - actions/
+        - index.ts - Registry of all `ActionFrames`
+        - SelectAffiliation.ts - This is an `ActionFrame` where the business logic lives
+        - RevealRandomCharacters.ts - This is another `ActionFrame` where the business logic lives
 
 <br />
 
@@ -29,45 +37,32 @@ Have fun! ⛵️
 ```tsx
 import { getFrameMetadata } from '@coinbase/onchainkit';
 import type { Metadata } from 'next';
-import { NEXT_PUBLIC_URL } from './config';
+import Home from './api/frames/actions/Home';
 
-const frameMetadata = getFrameMetadata({
-  buttons: [
-    {
-      label: 'Tell me the story',
-    },
-    {
-      label: 'Redirect to cute dog pictures',
-      action: 'post_redirect',
-    },
-  ],
-  image: `${NEXT_PUBLIC_URL}/park-1.png`,
-  input: {
-    text: 'Tell me a boat story',
-  },
-  post_url: `${NEXT_PUBLIC_URL}/api/frame`,
-});
 
+const home = new Home()
+const frameData = getFrameMetadata(home.generateFrameMetadata())
 export const metadata: Metadata = {
-  title: 'zizzamia.xyz',
-  description: 'LFG',
+  title: 'Echoes of Hyperion',
+  description: 'Echoes of Hyperion is an immersive fantasy game.',
   openGraph: {
-    title: 'zizzamia.xyz',
-    description: 'LFG',
-    images: [`${NEXT_PUBLIC_URL}/park-1.png`],
+    title: 'Echoes of Hyperion',
+    description: 'Echoes of Hyperion is an immersive fantasy game.',
+    images: [`${process.env.NEXT_PUBLIC_URL}/join-the-fight-2.png`],
   },
   other: {
-    ...frameMetadata,
+    ...frameData,
   },
 };
 
 export default function Page() {
   return (
     <>
-      <h1>zizzamia.xyz</h1>
+      <img src="join-the-fight.png" width="100%" />
     </>
   );
 }
+
 ```
 
 ### `app/layout.tsx`
@@ -87,51 +82,71 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-### `app/config.ts`
+### `app/api/frame/route.ts`
+
 ```ts
-export const NEXT_PUBLIC_URL = 'https://zizzamia.xyz';
-```
+import { getFaction } from "@/utils/factions";
+import { FrameMetadataType, FrameValidationData } from "@coinbase/onchainkit";
+import { NextRequest } from "next/server";
+
+export default class CheckAffiliation {
+  message: FrameValidationData;
+  request: NextRequest;
+
+  constructor(message:FrameValidationData, request:NextRequest ) {
+      this.message = message;
+      this.request = request;
+  }
+
+    factionId = ():number => {
+      return this.message.button-1;
+    }
+
+    generateFrameMetadata = async (): Promise<FrameMetadataType> => {
+      return{
+          buttons: [
+            {
+              label: `Switch Faction`,
+          },
+          {
+            label: `Generate Character`,
+          },
+          ],
+          image: `${process.env.NEXT_PUBLIC_URL}/affiliations/${getFaction(this.factionId())?.image}-affiliation.png`,
+          post_url: `${process.env.NEXT_PUBLIC_URL}/api/frames?actionName=RevealRandomCharacter&factionId=${this.factionId()}`,
+        }
+    }
+}
+```ts
 
 ### `app/api/frame/route.ts`
 
 ```ts
 import { FrameRequest, getFrameMessage, getFrameHtmlResponse } from '@coinbase/onchainkit';
 import { NextRequest, NextResponse } from 'next/server';
-import { NEXT_PUBLIC_URL } from '../../config';
+import { actions } from './actions';
+import ErrorFrame from './actions/ErrorFrame';
 
 async function getResponse(req: NextRequest): Promise<NextResponse> {
-  let accountAddress: string | undefined = '';
-  let text: string | undefined = '';
-
+  let component:any = undefined;
+  let actionName: string;
   const body: FrameRequest = await req.json();
-  const { isValid, message } = await getFrameMessage(body, { neynarApiKey: 'NEYNAR_ONCHAIN_KIT' });
-
+  const { isValid, message } = await getFrameMessage(body, { neynarApiKey: process.env.NEYNAR_KEY });
+  
+  // Every frame that you want to render will need a corresponding frame action class
+  actionName = <string>req.nextUrl.searchParams.get('actionName');
   if (isValid) {
-    accountAddress = message.interactor.verified_accounts[0];
+    component = new actions[actionName.toString()](message, req)
+    
+  } else {
+    // Pass in any image that you want to be rendered into a frame if the message is invalid
+    component = new ErrorFrame(`${process.env.NEXT_PUBLIC_URL}/error.png`)
   }
-
-  if (message?.input) {
-    text = message.input;
-  }
-
-  if (message?.button === 2) {
-    return NextResponse.redirect(
-      'https://www.google.com/search?q=cute+dog+pictures&tbm=isch&source=lnms',
-      { status: 302 },
+  let response = getFrameHtmlResponse(await component.generateFrameMetadata())
+    return new NextResponse(
+      response
     );
-  }
-
-  return new NextResponse(
-    getFrameHtmlResponse({
-      buttons: [
-        {
-          label: `🌲 Text: ${text}`,
-        },
-      ],
-      image: `${NEXT_PUBLIC_URL}/park-2.png`,
-      post_url: `${NEXT_PUBLIC_URL}/api/frame`,
-    }),
-  );
+  
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
@@ -139,6 +154,13 @@ export async function POST(req: NextRequest): Promise<Response> {
 }
 
 export const dynamic = 'force-dynamic';
+
+```
+
+### `.env.local`
+```ts
+NEXT_PUBLIC_URL = 'YOUR URL';
+NEYNAR_KEY = 'YOUR NEYNAR KEY';
 ```
 
 <br />
@@ -148,40 +170,6 @@ export const dynamic = 'force-dynamic';
 - [Official Farcaster Frames documentation](https://docs.farcaster.xyz/learn/what-is-farcaster/frames)
 - [Official Farcaster Frame specification](https://docs.farcaster.xyz/reference/frames/spec)
 - [OnchainKit documentation](https://github.com/coinbase/onchainkit)
-
-<br />
-
-## The Team and Our Community ☁️ 🌁 ☁️
-
-A Farcaster Frame in 100 Lines is all about community. If you have any questions, feel free to reach out to the core maintainers on Twitter or through Farcaster.
-
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top">
-        <a href="https://twitter.com/Zizzamia">
-          <img width="80" height="80" src="https://github.com/zizzamia.png?s=100">
-        </a>
-        <br />
-        <a href="https://twitter.com/Zizzamia">Leonardo Zizzamia</a>
-      </td>
-      <td align="center" valign="top">
-        <a href="https://warpcast.com/cnasc">
-          <img width="80" height="80" src="https://github.com/cnasc.png?s=100">
-        </a>
-        <br />
-        <a href="https://warpcast.com/cnasc">Chris Nascone</a>
-      </td>
-      <td align="center" valign="top">
-        <a href="https://twitter.com/0xr0b_eth">
-          <img width="80" height="80" src="https://github.com/robpolak.png?s=100">
-        </a>
-        <br />
-        <a href="https://twitter.com/0xr0b_eth">Rob Polak</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
 
 <br />
 
