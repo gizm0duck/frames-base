@@ -4,6 +4,8 @@ This was massively inspired by [A Frame in 100 lines or less](https://github.com
 
 This is a sample project using an opiniated framework utilizing `ActionClasses` to represent each frame that is rendered. Every `post_url` that you render for the frame must include a URL param of `actionID=FrameActionName` where `FrameActionName` corresponds to one of the classes you have created in `api/frames/actions`
 
+This frame is live at [https://frames-base.vercel.app/](https://frames-base.vercel.app/) so you can play around with it on the [Warpcast frame dev tools](https://warpcast.com/~/developers/frames)
+
 There are 3 types of frame classes that you use depending on the situation. 
 
 ## Action Class Types
