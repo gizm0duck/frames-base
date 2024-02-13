@@ -4,7 +4,7 @@ import { FrameMetadataType, FrameRequest, FrameValidationData, getFrameHtmlRespo
 import { NextRequest } from "next/server";
 import Home from "./Home";
 
-export default class CheckAffiliation {
+export default class RevealRandomCharacter {
     message: FrameValidationData;
     request: NextRequest;
 

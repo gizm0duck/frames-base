@@ -2,9 +2,10 @@
 import { FrameMetadataType } from "@coinbase/onchainkit";
 
 
+// Home components do not receive message or request as they are the landing 
+// page rendered for the frame
 export default class Home {
   
-
   constructor() {}
 
     generateFrameMetadata = (): FrameMetadataType => {

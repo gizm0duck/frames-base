@@ -1,6 +1,7 @@
 import { FrameRequest, getFrameMessage, getFrameHtmlResponse } from '@coinbase/onchainkit';
 import { NextRequest, NextResponse } from 'next/server';
 import { actions } from './actions';
+import ErrorFrame from './actions/ErrorFrame';
 
 async function getResponse(req: NextRequest): Promise<NextResponse> {
   let component:any = undefined;
@@ -13,11 +14,14 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   if (isValid) {
     component = new actions[actionName.toString()](message, req)
     
+  } else {
+    component = new ErrorFrame()
   }
   let response = getFrameHtmlResponse(await component.generateFrameMetadata())
     return new NextResponse(
       response
     );
+  
 }
 
 export async function POST(req: NextRequest): Promise<Response> {

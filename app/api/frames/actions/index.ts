@@ -6,5 +6,6 @@ export interface IActions {[className: string] : any;}
 export const actions:IActions =  {
     "SelectAffiliation": SelectAffiliation,
     "RevealRandomCharacter": RevealRandomCharacter,
-    "Home": Home
+    "Home": Home,
+    "Error": Error
 }
