@@ -2,7 +2,7 @@
 
 This was massively inspired by [A Frame in 100 lines or less](https://github.com/Zizzamia/a-frame-in-100-lines?tab=readme-ov-file) and was built on top of their original repo.
 
-This is an opiniated framework that utilizes action classes to represent each frame that is rendered. Every `post_url` that you render for the frame must include a URL param of `actionID=FrameActionName` where `FrameActionName` corresponds to one of the classes you have created in `api/frames/actions`
+This is a sample project using an opiniated framework utilizing `ActionClasses` to represent each frame that is rendered. Every `post_url` that you render for the frame must include a URL param of `actionID=FrameActionName` where `FrameActionName` corresponds to one of the classes you have created in `api/frames/actions`
 
 There are 3 types of frame classes that you use depending on the situation. 
 
