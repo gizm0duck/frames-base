@@ -1,4 +1,4 @@
-# A Simple frame... framework
+# A simple yet opinionated frames framework
 
 This was massively inspired by [A Frame in 100 lines or less](https://github.com/Zizzamia/a-frame-in-100-lines?tab=readme-ov-file) and was built on top of their original repo.
 
