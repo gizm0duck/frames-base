@@ -19,10 +19,10 @@ There are 3 types of frame classes that you use depending on the situation.
 ## App Structure
 
 - app
-  - page.tsx 
+  - page.tsx - The page you would cast to create your frame
   - api/
     - frames/
-      - route.ts
+      - route.ts - This handles loading the correct `ActionFrame` from the `post_url` of the previous frame
       - Home.ts - Base page for your frame
       - ErrorFrame.ts - Will be rendered in the case where the message is invalid
       - actions/
