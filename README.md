@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Echoes of Hyperion',
     description: 'Echoes of Hyperion is an immersive fantasy game.',
-    images: [`${process.env.NEXT_PUBLIC_URL}/join-the-fight-2.png`],
+    images: [`${process.env.NEXT_PUBLIC_URL}/join-the-fight.png`],
   },
   other: {
     ...frameData,
